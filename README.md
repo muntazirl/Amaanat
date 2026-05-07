@@ -41,7 +41,7 @@ A secure and user-friendly password manager built with React for the frontend an
    ```
 
 ### Frontend Setup
-1. In the root directory, install dependencies:
+1. From the amaanat-withdb directory, install dependencies:
    ```
    npm install
    ```
@@ -61,6 +61,3 @@ A secure and user-friendly password manager built with React for the frontend an
 
 Feel free to fork and contribute to this project!
 
-## License
-
-This project is licensed under the ISC License.
