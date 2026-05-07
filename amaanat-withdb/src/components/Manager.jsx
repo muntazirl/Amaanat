@@ -4,21 +4,29 @@ import { ToastContainer, toast, Bounce } from 'react-toastify';
 import uuid from 'react-native-uuid';
 
 
+
 const Manager = () => {
   const ref = useRef();
   const pef = useRef();
+  const site = useRef();
   const [form, setform] = useState({ site: "", username: "", password: "" });
   const [passwordArray, setpasswordArray] = useState([])
-
-
-  useEffect(() => {
-    let passwords = localStorage.getItem("passwords");
-    if (passwords) {
-      setpasswordArray(JSON.parse(passwords));
+    const getPasswords = async () => {
+      let req=await fetch("http://localhost:3000/");
+      let pass= await req.json();
+      setpasswordArray(pass)
+      console.log(pass);
     }
-
+     
+    
+  
+  useEffect(() => {
+    
+  getPasswords();
+    
   }, [])
-
+  
+  
 
   const showpassword = () => {
     if (ref.current.src.includes(
@@ -47,15 +55,75 @@ const Manager = () => {
 
   }
 
-  const deletePassword = (id) => {
-    console.log('deleting pass: ',id)
+  const deletePassword = async (id) => {
+    let c=confirm("Are you sure you want to delete this password ?")
+    if(c){
+
+      // localStorage.setItem("passwords",JSON.stringify(passwordArray.filter(item=>item.id!=id)))
+      setpasswordArray(passwordArray.filter(item=>item.id!=id))
+      let res=await fetch("http://localhost:3000/", {method: "DELETE",headers: {"Content-Type":"application/json"}, body: JSON.stringify({id})})
+      console.log("password deleted successfully !")
+      toast('Password deleted successfully', {
+      position: "top-right",
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: false,
+      pauseOnHover: false,
+      draggable: true,
+      progress: undefined,
+      theme: "dark",
+      transition: Bounce,
+    });
+    }
+
+  }
+
+  const editPassword = async (id) => {
+    console.log("Editing : ",id)
+    setform({...passwordArray.filter(i=>i.id===id)[0], id: id})
+    setpasswordArray(passwordArray.filter(item=>item.id!=id))
   }
   
+  
 
-  const savePassword = () => {
-    localStorage.setItem("passwords", JSON.stringify([...passwordArray, {...form, id: uuid.v4()}]));
-    setpasswordArray([...passwordArray, {...form, id: uuid.v4()}]);
-    console.log([...passwordArray, {...form, id: uuid.v4()}]);
+  const savePassword = async  () => {
+    if(form.site.length>3 && form.username.length>3&&form.password.length>3){
+
+      //if that id exists
+      await fetch("http://localhost:3000/", {method: "DELETE",headers: {"Content-Type":"application/json"}, body: JSON.stringify({id: form.id})})
+
+      setpasswordArray([...passwordArray, {...form, id: uuid.v4()}]);
+      let res=await fetch("http://localhost:3000/", {method: "POST",headers: {"Content-Type":"application/json"}, body: JSON.stringify({...form,id:uuid.v4()})})
+      // localStorage.setItem("passwords", JSON.stringify([...passwordArray, {...form, id: uuid.v4()}]));
+
+      // console.log([...passwordArray, {...form, id: uuid.v4()}]);
+      setform({ site: "", username: "", password: "" })
+      toast('Password Saved !', {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: false,
+        pauseOnHover: false,
+        draggable: true,
+        progress: undefined,
+        theme: "dark",
+        transition: Bounce,
+      });
+    }
+    else{
+      toast('Error : Password not saved !', {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: false,
+        pauseOnHover: false,
+        draggable: true,
+        progress: undefined,
+        theme: "dark",
+        transition: Bounce,
+      });
+    }
+    
   }
 
   const handleChange = (e) => {
@@ -65,15 +133,15 @@ const Manager = () => {
   const copyText = (e) => {
 
     navigator.clipboard.writeText(e);
-    toast('🦄 Wow so easy!', {
+    toast('Copied to Clipboard!', {
       position: "top-right",
       autoClose: 5000,
       hideProgressBar: false,
       closeOnClick: false,
-      pauseOnHover: true,
+      pauseOnHover: false,
       draggable: true,
       progress: undefined,
-      theme: "light",
+      theme: "dark",
       transition: Bounce,
     });
   }
@@ -99,7 +167,7 @@ const Manager = () => {
 
 
         <div className="absolute inset-0 -z-10 h-full w-full bg-white bg-[linear-gradient(to_right,#8080800a_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] bg-[size:14px_24px]"></div>
-        <div className='w-3/4 mx-auto py-4'>
+        <div className='p-10 md:px-40 md:mycontainer'>
           <h1 className='font-bold text-3xl text-center'>
             <span className='text-green-600'>&lt;</span>
             <span className=''>Amaanat</span>
@@ -110,9 +178,9 @@ const Manager = () => {
           <div className=' flex flex-col p-4 gap-8 items-center'>
             <div className="maininput w-full">
 
-              <input type="text" value={form.site} placeholder='Enter website URL' onChange={handleChange} name='site' className='rounded-full px-4 bg-white border border-green-400 w-full' />
+              <input type="text" value={form.site} ref={site} placeholder='Enter website URL' onChange={handleChange} name='site' className='rounded-full px-4 bg-white border border-green-400 w-full' />
             </div>
-            <div className="flex w-full justify-between gap-8">
+            <div className="flex flex-col md:flex-row w-full justify-between gap-8">
               <input type="text" placeholder='Enter username' onChange={handleChange} name='username' value={form.username} className='rounded-full px-4 bg-white border border-green-400 w-full' />
               <div className="relative w-full">
 
@@ -178,7 +246,7 @@ const Manager = () => {
                         </div>
                       </td>
                       <td className='text-center w-32 py-2'><div className="andiv flex justify-center items-center">
-                        {"•".repeat(item.password.length)}
+                        {"•".repeat(item.password?.length||0)}
                         <div className="cpybtn cursor-pointer" onClick={() => { copyText(item.password) }}>
 
                           <lord-icon
@@ -187,7 +255,8 @@ const Manager = () => {
                             trigger="hover" >
                           </lord-icon>
                         </div>
-                      </div></td>
+                      </div>
+                      </td>
                       <td className='text-center w-32 '>
                         <span className='cursor-pointer px-2 'onClick={()=>{editPassword(item.id)}}><lord-icon
                           src="https://cdn.lordicon.com/gwlusjdu.json"
