@@ -1,16 +1,66 @@
-# React + Vite
+# PassOp - Password Manager
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A secure and user-friendly password manager built with React for the frontend and Node.js/Express with MongoDB for the backend.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **Secure Storage**: Store your passwords safely in a MongoDB database.
+- **Add/Edit/Delete**: Easily manage your password entries.
+- **Password Visibility**: Toggle password visibility for convenience.
+- **Responsive Design**: Built with Tailwind CSS for a modern, responsive UI.
+- **Toast Notifications**: Get feedback on actions with React Toastify.
 
-## React Compiler
+## Tech Stack
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- **Frontend**: React, Vite, Tailwind CSS, React Toastify
+- **Backend**: Node.js, Express, MongoDB
+- **Other**: UUID for unique IDs
 
-## Expanding the ESLint configuration
+## Installation
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+### Prerequisites
+- Node.js
+- MongoDB (local or cloud instance)
+
+### Backend Setup
+1. Navigate to the `backend` directory:
+   ```
+   cd backend
+   ```
+2. Install dependencies:
+   ```
+   npm install
+   ```
+3. Create a `.env` file with your MongoDB connection string:
+   ```
+   MONGODB_URI=your_mongodb_connection_string
+   ```
+4. Start the backend server:
+   ```
+   node server.js
+   ```
+
+### Frontend Setup
+1. In the root directory, install dependencies:
+   ```
+   npm install
+   ```
+2. Start the development server:
+   ```
+   npm run dev
+   ```
+
+## Usage
+
+1. Open your browser and go to `http://localhost:5173` (default Vite port).
+2. Add your passwords by filling in the site, username, and password fields.
+3. View, edit, or delete existing passwords.
+4. Use the eye icon to toggle password visibility.
+
+## Contributing
+
+Feel free to fork and contribute to this project!
+
+## License
+
+This project is licensed under the ISC License.
