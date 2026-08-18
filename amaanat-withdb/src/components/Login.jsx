@@ -19,13 +19,10 @@ const Login = ({ onAuth }) => {
 
     if (!res.ok) return toast(data.error || "Something went wrong");
 
-    if (isSignup) {
-      toast("Account created — please log in");
-      setIsSignup(false);
-    } else {
-      localStorage.setItem("token", data.token);   // save the JWT
-      onAuth();                                     // tell App we're logged in
-    }
+    // both signup and login now return a token → log in directly
+    localStorage.setItem("token", data.token);   // save the JWT
+    if (isSignup) toast("Account created!");
+    onAuth();                                     // tell App we're logged in
   };
 
   return (

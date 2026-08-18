@@ -85,9 +85,10 @@ app.post('/signup', async (req,res)=>{
     return res.status(400).json({error: "user exists"})
   }
   const passhash=await bcrypt.hash(password,10)
-  await collection.insertOne({email,passhash})
-  
-  res.status(201).json({success: true})
+  const result=await collection.insertOne({email,passhash})
+
+  const token=jwt.sign({userId: result.insertedId}, process.env.JWT_SECRET,{expiresIn: '7d'})
+  res.status(201).json({token})
 })
 
 app.post('/login', async (req,res)=>{
