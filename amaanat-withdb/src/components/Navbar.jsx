@@ -1,6 +1,6 @@
 import React from 'react'
 
-const Navbar = () => {
+const Navbar = ({token,onLogout}) => {
     return (
         <div>
             <nav className=' bg-gray-700 text-white'>
@@ -14,10 +14,10 @@ const Navbar = () => {
                 </div>
                 
                 
-                    <button className='flex items-center cursor-pointer bg-green-600 rounded-md p-1 gap-3 '>
-                        <img src="/public/icons/github.svg" alt="" className='invert w-7' />
-                        <span className='text-green-50'>Github</span>
-                    </button>
+                    {token && (
+    <button onClick={onLogout} className="bg-green-600 rounded-md px-3 py-1 cursor-pointer">
+      Logout
+    </button>)}
                 
                 </div>
             </nav>

@@ -2,8 +2,12 @@ import React from 'react'
 import { useRef, useState, useEffect } from 'react'
 import { ToastContainer, toast, Bounce } from 'react-toastify';
 import uuid from 'react-native-uuid';
+const API=import.meta.env.VITE_API_URL || "http://localhost:3000";
 
-
+const authHeaders = ()=>({
+  "Content-Type": "application/json",
+  "Authorization": "Bearer " + localStorage.getItem("token")
+})
 
 const Manager = () => {
   const ref = useRef();
@@ -12,7 +16,7 @@ const Manager = () => {
   const [form, setform] = useState({ site: "", username: "", password: "" });
   const [passwordArray, setpasswordArray] = useState([])
     const getPasswords = async () => {
-      let req=await fetch("http://localhost:3000/");
+      let req=await fetch(`${API}/`, { headers: authHeaders() });
       let pass= await req.json();
       setpasswordArray(pass)
       console.log(pass);
@@ -31,25 +35,25 @@ const Manager = () => {
   const showpassword = () => {
     if (ref.current.src.includes(
 
-      "/public/icons/eye.png"
+      "/icons/eye.png"
     )
     ) {
 
-      ref.current.src = "/public/icons/eyecross.png";
+      ref.current.src = "/icons/eyecross.png";
     }
     else {
-      ref.current.src = "/public/icons/eye.png";
+      ref.current.src = "/icons/eye.png";
     }
   }
 
   const chtypepassword = () => {
-    if (ref.current.src.includes("/public/icons/eyecross.png")) {
+    if (ref.current.src.includes("/icons/eyecross.png")) {
       pef.current.type = "text";
-      ref.current.src = "/public/icons/eye.png"
+      ref.current.src = "/icons/eye.png"
     }
     else {
       pef.current.type = "password";
-      ref.current.src = "/public/icons/eyecross.png"
+      ref.current.src = "/icons/eyecross.png"
 
     }
 
@@ -61,7 +65,7 @@ const Manager = () => {
 
       // localStorage.setItem("passwords",JSON.stringify(passwordArray.filter(item=>item.id!=id)))
       setpasswordArray(passwordArray.filter(item=>item.id!=id))
-      let res=await fetch("http://localhost:3000/", {method: "DELETE",headers: {"Content-Type":"application/json"}, body: JSON.stringify({id})})
+      let res=await fetch(`${API}/`, {method: "DELETE",headers: authHeaders(), body: JSON.stringify({id})})
       console.log("password deleted successfully !")
       toast('Password deleted successfully', {
       position: "top-right",
@@ -86,45 +90,43 @@ const Manager = () => {
   
   
 
-  const savePassword = async  () => {
-    if(form.site.length>3 && form.username.length>3&&form.password.length>3){
+  const savePassword = async () => {
+  if (form.site.length > 3 && form.username.length > 3 && form.password.length > 3) {
+    const id = form.id || uuid.v4();              // one id, used everywhere
+    const entry = { site: form.site, username: form.username, password: form.password, id };
 
-      //if that id exists
-      await fetch("http://localhost:3000/", {method: "DELETE",headers: {"Content-Type":"application/json"}, body: JSON.stringify({id: form.id})})
+    // remove old version (for edit), then save the new one
+    await fetch(`${API}/`, { method: "DELETE", headers: authHeaders(), body: JSON.stringify({ id }) });
+    setpasswordArray([...passwordArray.filter(i => i.id !== id), entry]);
+    await fetch(`${API}/`, { method: "POST", headers: authHeaders(), body: JSON.stringify(entry) });
 
-      setpasswordArray([...passwordArray, {...form, id: uuid.v4()}]);
-      let res=await fetch("http://localhost:3000/", {method: "POST",headers: {"Content-Type":"application/json"}, body: JSON.stringify({...form,id:uuid.v4()})})
-      // localStorage.setItem("passwords", JSON.stringify([...passwordArray, {...form, id: uuid.v4()}]));
+    setform({ site: "", username: "", password: "" });
 
-      // console.log([...passwordArray, {...form, id: uuid.v4()}]);
-      setform({ site: "", username: "", password: "" })
-      toast('Password Saved !', {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: false,
-        pauseOnHover: false,
-        draggable: true,
-        progress: undefined,
-        theme: "dark",
-        transition: Bounce,
-      });
-    }
-    else{
-      toast('Error : Password not saved !', {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: false,
-        pauseOnHover: false,
-        draggable: true,
-        progress: undefined,
-        theme: "dark",
-        transition: Bounce,
-      });
-    }
-    
+    toast('Password Saved !', {
+      position: "top-right",
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: false,
+      pauseOnHover: false,
+      draggable: true,
+      progress: undefined,
+      theme: "dark",
+      transition: Bounce,
+    });
+  } else {
+    toast('Error : Password not saved !', {
+      position: "top-right",
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: false,
+      pauseOnHover: false,
+      draggable: true,
+      progress: undefined,
+      theme: "dark",
+      transition: Bounce,
+    });
   }
+};
 
   const handleChange = (e) => {
     setform({ ...form, [e.target.name]: e.target.value })
@@ -186,7 +188,7 @@ const Manager = () => {
 
                 <div><input type="password" placeholder='Enter password' ref={pef} onChange={handleChange} name='password' value={form.password} className='rounded-full px-4 bg-white border border-green-400 w-full' /></div>
 
-                <span className='absolute right-2 top-0'><img src="/public/icons/eyecross.png" ref={ref} className='cursor-pointer' onClick={chtypepassword} width={25} alt="" />
+                <span className='absolute right-2 top-0'><img src="/icons/eyecross.png" ref={ref} className='cursor-pointer' onClick={chtypepassword} width={25} alt="" />
                 </span>
               </div>
             </div>
