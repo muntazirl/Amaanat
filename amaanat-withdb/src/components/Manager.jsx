@@ -1,6 +1,6 @@
 import React from 'react'
 import { useRef, useState, useEffect } from 'react'
-import { ToastContainer, toast, Bounce } from 'react-toastify';
+import { toast, Bounce } from 'react-toastify';
 import uuid from 'react-native-uuid';
 const API=import.meta.env.VITE_API_URL || "http://localhost:3000";
 
@@ -75,7 +75,6 @@ const Manager = () => {
       pauseOnHover: false,
       draggable: true,
       progress: undefined,
-      theme: "dark",
       transition: Bounce,
     });
     }
@@ -110,7 +109,6 @@ const Manager = () => {
       pauseOnHover: false,
       draggable: true,
       progress: undefined,
-      theme: "dark",
       transition: Bounce,
     });
   } else {
@@ -122,7 +120,6 @@ const Manager = () => {
       pauseOnHover: false,
       draggable: true,
       progress: undefined,
-      theme: "dark",
       transition: Bounce,
     });
   }
@@ -143,7 +140,6 @@ const Manager = () => {
       pauseOnHover: false,
       draggable: true,
       progress: undefined,
-      theme: "dark",
       transition: Bounce,
     });
   }
@@ -152,19 +148,6 @@ const Manager = () => {
   return (
 
     <>
-      <ToastContainer
-        position="top-right"
-        autoClose={5000}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick={false}
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-        theme="light"
-        transition={Bounce}
-      />
       <div>
 
 
