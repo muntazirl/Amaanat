@@ -1,4 +1,4 @@
-# PassOp - Password Manager
+# Amaanat - Password Manager
 
 A secure and user-friendly password manager built with React for the frontend and Node.js/Express with MongoDB for the backend.
 
